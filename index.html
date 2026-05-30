@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Умничка — игры для детей</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Главное меню -->
+    <section id="screen-menu" class="screen active">
+      <div class="hero">🌈</div>
+      <h1>Умничка</h1>
+      <p class="tagline">Умные игры для маленьких исследователей</p>
+      <div class="menu-buttons">
+        <button type="button" class="menu-btn" data-game="memory">
+          <span class="menu-icon">🃏</span>
+          <span class="menu-title">Найди пару</span>
+          <span class="menu-desc">Запомни и открой одинаковых зверят</span>
+        </button>
+        <button type="button" class="menu-btn" data-game="count">
+          <span class="menu-icon">🔢</span>
+          <span class="menu-title">Сосчитай</span>
+          <span class="menu-desc">Сколько картинок на экране?</span>
+        </button>
+        <button type="button" class="menu-btn" data-game="odd">
+          <span class="menu-icon">🔍</span>
+          <span class="menu-title">Что лишнее?</span>
+          <span class="menu-desc">Найди предмет не как все</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Найди пару -->
+    <section id="screen-memory" class="screen">
+      <header class="game-header">
+        <button type="button" class="back-btn" data-back aria-label="Назад">←</button>
+        <h2>🃏 Найди пару</h2>
+        <div class="score" id="memory-score">Ходы: 0</div>
+      </header>
+      <div class="board memory-board" id="memory-board"></div>
+      <div class="win-banner hidden" id="memory-win">
+        <p>🎉 Молодец!</p>
+        <button type="button" class="primary-btn" id="memory-again">Ещё раз</button>
+      </div>
+    </section>
+
+    <!-- Сосчитай -->
+    <section id="screen-count" class="screen">
+      <header class="game-header">
+        <button type="button" class="back-btn" data-back aria-label="Назад">←</button>
+        <h2>🔢 Сосчитай</h2>
+        <div class="score" id="count-score">⭐ 0</div>
+      </header>
+      <p class="prompt" id="count-prompt">Сколько здесь?</p>
+      <div class="count-items" id="count-items"></div>
+      <div class="answer-row" id="count-answers"></div>
+      <p class="feedback hidden" id="count-feedback"></p>
+    </section>
+
+    <!-- Что лишнее -->
+    <section id="screen-odd" class="screen">
+      <header class="game-header">
+        <button type="button" class="back-btn" data-back aria-label="Назад">←</button>
+        <h2>🔍 Что лишнее?</h2>
+        <div class="score" id="odd-score">⭐ 0</div>
+      </header>
+      <p class="prompt">Нажми на то, что не подходит:</p>
+      <div class="odd-row" id="odd-row"></div>
+      <p class="feedback hidden" id="odd-feedback"></p>
+      <button type="button" class="primary-btn hidden" id="odd-next">Дальше →</button>
+    </section>
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>
