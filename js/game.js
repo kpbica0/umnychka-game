@@ -3,20 +3,17 @@
 const ANIMALS = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼"];
 const COUNT_EMOJI = ["🍎", "⭐", "🌸", "🎈", "🐟", "🍋", "🦋", "🍓"];
 
-const MEMORY_ROWS = 25;
-const MEMORY_COLS = 25;
-const MEMORY_CELLS = MEMORY_ROWS * MEMORY_COLS;
-const MEMORY_PAIR_COUNT = Math.floor(MEMORY_CELLS / 2);
+const MEMORY_PAIRS = 18;
 
 const PICTURE_EMOJI = [
   ...ANIMALS,
   ...COUNT_EMOJI,
   "🐮", "🐷", "🐸", "🐵", "🦁", "🐯", "🐨", "🐔", "🐧", "🐦",
-  "🦆", "🦉", "🐴", "🦄", "🐢", "🐍", "🦎", "🐙", "🦀", "🐡",
-  "🍌", "🍊", "🍇", "🍉", "🍒", "🥕", "🌽", "🍕", "🍰", "🍪",
-  "⚽", "🏀", "🎾", "🎸", "🎨", "🚗", "🚌", "✈️", "🚀", "🚲",
+  "🦆", "🦉", "🐴", "🦄", "🐢", "🐍", "🐙", "🦀", "🐡", "🐬",
+  "🍌", "🍊", "🍇", "🍉", "🍒", "🥕", "🍕", "🍰", "🍪", "🍩",
+  "⚽", "🏀", "🎾", "🎸", "🚗", "🚌", "✈️", "🚀", "🚲", "🚁",
   "🌞", "🌙", "☁️", "❄️", "🌈", "🌳", "🍄", "🌻", "🌺", "💎",
-  "👑", "🎁", "🎀", "🧸", "🪁", "⛄", "🔔", "🎃", "🦋", "🐝",
+  "👑", "🎁", "🎀", "🧸", "⛄", "🔔", "🎃", "🐝", "🦋", "🐞",
 ];
 
 const ODD_ROUNDS = [
@@ -30,18 +27,11 @@ const ODD_ROUNDS = [
   { items: ["👕", "👖", "🧦", "🍉"], odd: 3 },
 ];
 
-const memoryBoardEl = document.getElementById("memory-board");
-const memoryScoreEl = document.getElementById("memory-score");
-const memoryWinEl = document.getElementById("memory-win");
-const memoryLoadingEl = document.getElementById("memory-loading");
-
 function shuffle(arr) {
-  const a = arr.slice();
+  const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
-    const j = (Math.random() * (i + 1)) | 0;
-    const t = a[i];
-    a[i] = a[j];
-    a[j] = t;
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
 }
@@ -49,7 +39,6 @@ function shuffle(arr) {
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  document.querySelector(".app").classList.toggle("wide", id === "screen-memory");
 }
 
 document.querySelectorAll(".menu-btn").forEach((btn) => {
@@ -67,89 +56,48 @@ document.querySelectorAll("[data-back]").forEach((btn) => {
 });
 
 /* ─── Найди пару ─── */
-let memoryState = { flipped: [], moves: 0, matchedPairs: 0, lock: false };
-let pairPoolCache = null;
-
-function buildPairPool() {
-  if (pairPoolCache) return pairPoolCache;
-  const pool = [];
-  for (let i = 0; i < PICTURE_EMOJI.length; i++) {
-    const emoji = PICTURE_EMOJI[i];
-    for (let hue = 0; hue < 360; hue += 12) {
-      pool.push({ emoji, hue });
-    }
-  }
-  pairPoolCache = pool;
-  return pool;
-}
+let memoryState = { flipped: [], moves: 0, lock: false };
 
 function buildRandomPairs() {
-  return shuffle(buildPairPool())
-    .slice(0, MEMORY_PAIR_COUNT)
-    .map((item, id) => ({ id, emoji: item.emoji, hue: item.hue }));
-}
-
-function updateMemoryScore(showPairs = true) {
-  if (showPairs) {
-    memoryScoreEl.textContent =
-      `Ходы: ${memoryState.moves} · Пары: ${memoryState.matchedPairs}/${MEMORY_PAIR_COUNT}`;
-    return;
-  }
-  memoryScoreEl.textContent = `Ходы: ${memoryState.moves}`;
-}
-
-function hideMemoryCard(card) {
-  card.classList.remove("flipped", "matched");
-  card.classList.add("hidden-face");
-  card.style.removeProperty("background-color");
-}
-
-function showMemoryCard(card) {
-  card.classList.add("flipped");
-  card.classList.remove("hidden-face");
-  card.style.backgroundColor = card.dataset.color;
-}
-
-function renderMemoryBoard(slots) {
-  const chunks = [];
-  for (let i = 0; i < slots.length; i++) {
-    const slot = slots[i];
-    if (!slot) {
-      chunks.push('<div class="card-gap" aria-hidden="true"></div>');
-      continue;
-    }
-    chunks.push(
-      `<button type="button" class="card hidden-face" data-pair-id="${slot.id}" data-color="hsl(${slot.hue},72%,78%)" aria-label="Карточка"><span class="card-emoji">${slot.emoji}</span></button>`
-    );
-  }
-  memoryBoardEl.innerHTML = chunks.join("");
+  return shuffle(PICTURE_EMOJI)
+    .slice(0, MEMORY_PAIRS)
+    .map((emoji, id) => ({ id, emoji }));
 }
 
 function startMemory() {
-  memoryState = { flipped: [], moves: 0, matchedPairs: 0, lock: false };
-  memoryWinEl.classList.add("hidden");
-  memoryLoadingEl.classList.remove("hidden");
-  memoryBoardEl.innerHTML = "";
-  updateMemoryScore();
+  memoryState = { flipped: [], moves: 0, lock: false };
+  document.getElementById("memory-win").classList.add("hidden");
+  document.getElementById("memory-score").textContent = "Ходы: 0";
 
-  const uniquePairs = buildRandomPairs();
-  const deck = uniquePairs.flatMap((pair) => [pair, pair]);
-  const slots = shuffle(deck.concat([null]));
+  const pairs = buildRandomPairs();
+  const deck = shuffle(pairs.flatMap((pair) => [pair, pair]));
+  const board = document.getElementById("memory-board");
+  board.innerHTML = "";
 
-  requestAnimationFrame(() => {
-    renderMemoryBoard(slots);
-    memoryLoadingEl.classList.add("hidden");
+  deck.forEach((pair) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "card hidden-face";
+    btn.dataset.pairId = String(pair.id);
+    btn.dataset.emoji = pair.emoji;
+    btn.setAttribute("aria-label", "Карточка");
+    btn.addEventListener("click", () => onMemoryClick(btn));
+    board.appendChild(btn);
   });
 }
 
 function onMemoryClick(card) {
   if (memoryState.lock || card.classList.contains("flipped") || card.classList.contains("matched")) return;
 
-  showMemoryCard(card);
+  card.classList.add("flipped");
+  card.classList.remove("hidden-face");
+  card.textContent = card.dataset.emoji;
   memoryState.flipped.push(card);
+
   if (memoryState.flipped.length < 2) return;
 
   memoryState.moves++;
+  document.getElementById("memory-score").textContent = `Ходы: ${memoryState.moves}`;
   memoryState.lock = true;
 
   const [a, b] = memoryState.flipped;
@@ -158,28 +106,21 @@ function onMemoryClick(card) {
     b.classList.add("matched");
     memoryState.flipped = [];
     memoryState.lock = false;
-    memoryState.matchedPairs++;
-    updateMemoryScore();
-
-    if (memoryState.matchedPairs === MEMORY_PAIR_COUNT) {
-      setTimeout(() => memoryWinEl.classList.remove("hidden"), 400);
+    if (document.querySelectorAll(".card.matched").length === document.querySelectorAll(".card").length) {
+      setTimeout(() => document.getElementById("memory-win").classList.remove("hidden"), 400);
     }
-    return;
+  } else {
+    setTimeout(() => {
+      [a, b].forEach((c) => {
+        c.classList.remove("flipped", "matched");
+        c.classList.add("hidden-face");
+        c.textContent = "";
+      });
+      memoryState.flipped = [];
+      memoryState.lock = false;
+    }, 900);
   }
-
-  updateMemoryScore(false);
-  setTimeout(() => {
-    hideMemoryCard(a);
-    hideMemoryCard(b);
-    memoryState.flipped = [];
-    memoryState.lock = false;
-  }, 700);
 }
-
-memoryBoardEl.addEventListener("click", (event) => {
-  const card = event.target.closest(".card");
-  if (card) onMemoryClick(card);
-});
 
 document.getElementById("memory-again").addEventListener("click", startMemory);
 
@@ -188,8 +129,8 @@ let countStars = 0;
 let countAnswer = 0;
 
 function startCountRound() {
-  countAnswer = (Math.random() * 5 | 0) + 1;
-  const emoji = COUNT_EMOJI[Math.random() * COUNT_EMOJI.length | 0];
+  countAnswer = Math.floor(Math.random() * 5) + 1;
+  const emoji = COUNT_EMOJI[Math.floor(Math.random() * COUNT_EMOJI.length)];
   const itemsEl = document.getElementById("count-items");
   itemsEl.innerHTML = "";
 
@@ -202,7 +143,10 @@ function startCountRound() {
   }
 
   const options = new Set([countAnswer]);
-  while (options.size < 6) options.add((Math.random() * 6 | 0) + 1);
+  while (options.size < 6) {
+    const n = Math.floor(Math.random() * 6) + 1;
+    options.add(n);
+  }
   const answers = shuffle([...options]).slice(0, 6);
 
   const row = document.getElementById("count-answers");
