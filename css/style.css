@@ -6,7 +6,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: "Segoe UI", system-ui, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
   background: linear-gradient(180deg, #fef3c7 0%, #fde68a 40%, #fbcfe8 100%);
   color: #1e293b;
   touch-action: manipulation;
@@ -161,7 +161,6 @@ h1 {
   background: rgba(255, 255, 255, 0.55);
   box-shadow: inset 0 0 0 1px rgba(124, 58, 237, 0.15);
   -webkit-overflow-scrolling: touch;
-  contain: strict;
 }
 
 .memory-board {
@@ -172,7 +171,6 @@ h1 {
   gap: 1px;
   width: max-content;
   padding: 4px;
-  contain: layout style;
 }
 
 .card {
@@ -180,7 +178,7 @@ h1 {
   height: var(--cell);
   border: none;
   border-radius: 4px;
-  font-size: 1.35rem;
+  font-size: clamp(12px, calc(var(--cell) * 0.62), 28px);
   line-height: 1;
   cursor: pointer;
   background: linear-gradient(145deg, #8b5cf6, #6d28d9);
@@ -191,6 +189,23 @@ h1 {
   align-items: center;
   justify-content: center;
   padding: 0;
+  overflow: hidden;
+}
+
+.card-emoji {
+  display: block;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.card.hidden-face .card-emoji {
+  visibility: hidden;
+}
+
+.card.flipped .card-emoji,
+.card.matched .card-emoji {
+  visibility: visible;
 }
 
 .card:active:not(:disabled) {
@@ -377,9 +392,7 @@ h1 {
 }
 
 @media (max-width: 480px) {
-  .memory-board { --cell: 14px; }
-  .card { font-size: 0.85rem; }
-  .card.hidden-face::before { font-size: 0.65rem; }
+  .memory-board { --cell: 18px; }
 }
 
 @media (max-width: 360px) {

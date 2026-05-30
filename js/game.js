@@ -101,14 +101,12 @@ function updateMemoryScore(showPairs = true) {
 function hideMemoryCard(card) {
   card.classList.remove("flipped", "matched");
   card.classList.add("hidden-face");
-  card.textContent = "";
   card.style.removeProperty("background-color");
 }
 
 function showMemoryCard(card) {
   card.classList.add("flipped");
   card.classList.remove("hidden-face");
-  card.textContent = card.dataset.emoji;
   card.style.backgroundColor = card.dataset.color;
 }
 
@@ -121,7 +119,7 @@ function renderMemoryBoard(slots) {
       continue;
     }
     chunks.push(
-      `<button type="button" class="card hidden-face" data-pair-id="${slot.id}" data-emoji="${slot.emoji}" data-color="hsl(${slot.hue},72%,78%)" aria-label="Карточка"></button>`
+      `<button type="button" class="card hidden-face" data-pair-id="${slot.id}" data-color="hsl(${slot.hue},72%,78%)" aria-label="Карточка"><span class="card-emoji">${slot.emoji}</span></button>`
     );
   }
   memoryBoardEl.innerHTML = chunks.join("");
