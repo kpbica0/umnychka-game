@@ -19,6 +19,11 @@ body {
   min-height: 100vh;
 }
 
+.app.wide {
+  max-width: 100%;
+  padding: 8px 12px;
+}
+
 .screen {
   display: none;
 }
@@ -126,9 +131,9 @@ h1 {
 .score {
   font-weight: 700;
   background: #fff;
-  padding: 8px 14px;
+  padding: 8px 10px;
   border-radius: 12px;
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   white-space: nowrap;
 }
 
@@ -140,26 +145,52 @@ h1 {
 }
 
 /* Memory */
+.memory-loading {
+  text-align: center;
+  margin: 0 0 8px;
+  font-weight: 600;
+  color: #6d28d9;
+}
+
+.memory-scroll {
+  overflow: auto;
+  max-height: calc(100dvh - 120px);
+  max-width: 100%;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(124, 58, 237, 0.15);
+  -webkit-overflow-scrolling: touch;
+  contain: strict;
+}
+
 .memory-board {
+  --cell: 50px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(25, var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: 1px;
+  width: max-content;
+  padding: 4px;
+  contain: layout style;
 }
 
 .card {
-  aspect-ratio: 1;
+  width: var(--cell);
+  height: var(--cell);
   border: none;
-  border-radius: 16px;
-  font-size: 2rem;
+  border-radius: 4px;
+  font-size: 1.35rem;
+  line-height: 1;
   cursor: pointer;
   background: linear-gradient(145deg, #8b5cf6, #6d28d9);
-  color: #fff;
-  box-shadow: 0 4px 0 #5b21b6;
-  transition: transform 0.15s;
+  color: #1e293b;
+  box-shadow: 0 1px 0 #5b21b6;
+  transition: transform 0.1s;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
 }
 
 .card:active:not(:disabled) {
@@ -168,20 +199,20 @@ h1 {
 
 .card.flipped,
 .card.matched {
-  background: #fff;
-  box-shadow: 0 4px 0 #e2e8f0;
+  box-shadow: 0 1px 0 #cbd5e1;
   color: inherit;
 }
 
 .card.matched {
-  background: #bbf7d0;
-  box-shadow: 0 4px 0 #86efac;
+  box-shadow: inset 0 0 0 2px #22c55e;
+  opacity: 0.85;
 }
 
 .card.hidden-face::before {
   content: "?";
-  font-size: 1.8rem;
+  font-size: 1rem;
   font-weight: 700;
+  color: #fff;
 }
 
 .card.flipped::before,
@@ -191,6 +222,13 @@ h1 {
 
 .card:disabled {
   cursor: default;
+}
+
+.card-gap {
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 4px;
+  background: transparent;
 }
 
 /* Count */
@@ -338,8 +376,12 @@ h1 {
   display: none !important;
 }
 
+@media (max-width: 480px) {
+  .memory-board { --cell: 14px; }
+  .card { font-size: 0.85rem; }
+  .card.hidden-face::before { font-size: 0.65rem; }
+}
+
 @media (max-width: 360px) {
-  .memory-board { gap: 6px; }
-  .card { font-size: 1.5rem; border-radius: 12px; }
   .odd-btn { min-height: 100px; font-size: 2.8rem; }
 }

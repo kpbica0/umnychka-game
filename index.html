@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="Умничка — бесплатные игры для детей: найди пару, сосчитай, что лишнее. Работает в браузере на телефоне.">
+  <meta name="theme-color" content="#7c3aed">
   <title>Умничка — игры для детей</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -17,7 +19,7 @@
         <button type="button" class="menu-btn" data-game="memory">
           <span class="menu-icon">🃏</span>
           <span class="menu-title">Найди пару</span>
-          <span class="menu-desc">Запомни и открой одинаковых зверят</span>
+          <span class="menu-desc">Поле 25×25 — найди одинаковые картинки</span>
         </button>
         <button type="button" class="menu-btn" data-game="count">
           <span class="menu-icon">🔢</span>
@@ -39,7 +41,10 @@
         <h2>🃏 Найди пару</h2>
         <div class="score" id="memory-score">Ходы: 0</div>
       </header>
-      <div class="board memory-board" id="memory-board"></div>
+      <p class="memory-loading hidden" id="memory-loading">Собираем поле…</p>
+      <div class="memory-scroll">
+        <div class="board memory-board" id="memory-board"></div>
+      </div>
       <div class="win-banner hidden" id="memory-win">
         <p>🎉 Молодец!</p>
         <button type="button" class="primary-btn" id="memory-again">Ещё раз</button>
@@ -73,6 +78,6 @@
     </section>
   </div>
 
-  <script src="js/game.js"></script>
+  <script src="js/game.js" defer></script>
 </body>
 </html>
